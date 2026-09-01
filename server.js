@@ -10,14 +10,12 @@ const ADMIN_PASSWORD = 'HOGAN@Admin#2025';
 const DATA_DIR = path.join(__dirname, 'data');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
 
-// إنشاء المجلدات
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 const PHOTOS_FILE = path.join(DATA_DIR, 'photos.json');
 
-// ملفات افتراضية
 if (!fs.existsSync(SETTINGS_FILE)) {
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify({
     logo: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=200&auto=format&fit=crop',
@@ -37,39 +35,30 @@ if (!fs.existsSync(PHOTOS_FILE)) {
   ], null, 2));
 }
 
-// إعداد رفع الصور
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
 
-// قراءة وكتابة البيانات
 const readSettings = () => JSON.parse(fs.readFileSync(SETTINGS_FILE));
 const writeSettings = (s) => fs.writeFileSync(SETTINGS_FILE, JSON.stringify(s, null, 2));
 const readPhotos = () => JSON.parse(fs.readFileSync(PHOTOS_FILE));
 const writePhotos = (p) => fs.writeFileSync(PHOTOS_FILE, JSON.stringify(p, null, 2));
 
-// ✅ API - تسجيل الدخول
 app.post('/api/login', express.json(), (req, res) => {
   if (req.body.password === ADMIN_PASSWORD) return res.json({ success: true });
   res.status(401).json({ success: false, error: 'Wrong password' });
 });
 
-// ✅ API - جلب كل الإعدادات
 app.get('/api/settings', (req, res) => res.json(readSettings()));
-
-// ✅ API - حفظ الإعدادات
 app.put('/api/settings', express.json(), (req, res) => {
   const settings = req.body;
   writeSettings(settings);
   res.json({ success: true });
 });
 
-// ✅ API - جلب جميع الصور
 app.get('/api/photos', (req, res) => res.json(readPhotos()));
-
-// ✅ API - رفع صورة جديدة
 app.post('/api/photos', upload.single('image'), (req, res) => {
   const photos = readPhotos();
   const newPhoto = {
@@ -83,7 +72,6 @@ app.post('/api/photos', upload.single('image'), (req, res) => {
   res.json({ success: true, photo: newPhoto });
 });
 
-// ✅ API - حذف صورة
 app.delete('/api/photos/:id', (req, res) => {
   let photos = readPhotos();
   const id = parseInt(req.params.id);
@@ -98,7 +86,6 @@ app.delete('/api/photos/:id', (req, res) => {
   res.status(404).json({ success: false });
 });
 
-// ✅ API - رفع اللوجو
 app.post('/api/upload-logo', upload.single('logo'), (req, res) => {
   const settings = readSettings();
   settings.logo = `/uploads/${req.file.filename}`;
@@ -106,7 +93,6 @@ app.post('/api/upload-logo', upload.single('logo'), (req, res) => {
   res.json({ success: true, logo: settings.logo });
 });
 
-// ✅ API - رفع الخلفية
 app.post('/api/upload-bg', upload.single('bg'), (req, res) => {
   const settings = readSettings();
   settings.heroBg = `/uploads/${req.file.filename}`;
@@ -114,10 +100,13 @@ app.post('/api/upload-bg', upload.single('bg'), (req, res) => {
   res.json({ success: true, heroBg: settings.heroBg });
 });
 
-// تشغيل الملفات الثابتة
 app.use(express.static(path.join(__dirname, 'public')));
 
-// تشغيل السيرفر
-app.listen(PORT, () => {
-  console.log(`🚀 HOGAN Ph Server running at http://localhost:${PORT}`);
-});
+// ✅ التعديل السحري لـ Vercel
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 HOGAN Ph Server running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
