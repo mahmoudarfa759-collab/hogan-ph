@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOGAN Ph | Photography</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;900&family=Cairo:wght@400;700;900&family=Lora:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0a0a0a; --fg: #fafafa; --primary: #e11d48; --font: 'Poppins', sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font); }
+    body { background: var(--bg); color: var(--fg); overflow-x: hidden; }
+    nav { position: fixed; top: 0; width: 100%; background: rgba(10,10,10,0.9); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 2px solid var(--primary); }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: bold; }
+    .brand img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+    .brand span { color: var(--primary); }
+    nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 16px; cursor: pointer; }
+    nav a:hover { color: var(--primary); }
+    .hero { height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop') center/cover; }
+    .hero img { width: 180px; height: 180px; border-radius: 50%; border: 5px solid white; margin-bottom: 20px; object-fit: cover; background: #fff; }
+    .hero h1 { font-size: 60px; margin-bottom: 10px; }
+    .hero p { font-size: 22px; margin-bottom: 30px; color: #ddd; }
+    .hero a { background: var(--primary); color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; margin: 5px; transition: 0.3s; }
+    .hero a:hover { opacity: 0.8; transform: translateY(-3px); }
+    .hero .outline { background: transparent; border: 2px solid white; }
+    .gallery { max-width: 1200px; margin: 50px auto; padding: 0 5%; }
+    .gallery h2 { text-align: center; font-size: 40px; margin-bottom: 40px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .item { border-radius: 15px; overflow: hidden; position: relative; cursor: pointer; }
+    .item img { width: 100%; height: 300px; object-fit: cover; transition: 0.3s; }
+    .item:hover img { transform: scale(1.1); }
+    .item .info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); padding: 15px; }
+    .item .info h3 { font-size: 18px; margin: 0; }
+    .item .info p { font-size: 14px; color: #ccc; margin: 0; }
+    .contact { background: #111; padding: 60px 5%; text-align: center; }
+    .contact h2 { font-size: 36px; margin-bottom: 30px; }
+    .cards { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .card { background: #1a1a1a; padding: 30px; border-radius: 15px; width: 250px; }
+    .card h3 { font-size: 18px; margin-bottom: 10px; }
+    .card a { color: var(--primary); text-decoration: none; font-size: 18px; font-weight: bold; }
+    footer { text-align: center; padding: 20px; background: #0a0a0a; border-top: 2px solid var(--primary); }
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .lightbox img { max-width: 90%; max-height: 85%; border-radius: 10px; }
+    .lightbox .close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; border: none; background: none; }
+    .lightbox .prev, .lightbox .next { position: absolute; top: 50%; transform: translateY(-50%); font-size: 30px; color: white; background: rgba(255,255,255,0.2); border: none; padding: 15px; border-radius: 50%; cursor: pointer; }
+    .lightbox .prev { left: 20px; } .lightbox .next { right: 20px; }
+    .lightbox .counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #aaa; font-size: 18px; }
+    .admin-panel { display: none; max-width: 900px; margin: 50px auto; padding: 30px; background: #1a1a1a; border-radius: 20px; }
+    .admin-panel.active { display: block; }
+    .settings-section { margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+    .settings-section h3 { margin-bottom: 15px; color: var(--primary); }
+    .setting-item { flex: 1; min-width: 200px; }
+    .setting-item label { display: block; margin-bottom: 5px; font-size: 14px; color: #aaa; }
+    .setting-item input[type="text"], .setting-item input[type="color"], .setting-item select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: white; }
+    .setting-item input[type="color"] { height: 40px; padding: 0; }
+    .upload-btn { background: #333; color: white; padding: 20px; border-radius: 8px; cursor: pointer; text-align: center; border: 2px dashed #555; }
+    .upload-btn:hover { border-color: var(--primary); }
+    .btn-primary { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; margin-top: 15px; }
+    .logout-btn { background: #333; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; margin-top: 10px; }
+    .logout-btn:hover { background: #444; color: white; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 2000; }
+    .modal-box { background: #1a1a1a; padding: 40px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+    .modal-box input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #444; background: #111; color: white; }
+    .modal-box button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; }
+    .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 20px; }
+    .admin-grid .thumb { position: relative; }
+    .admin-grid img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; }
+    .admin-grid .delete { position: absolute; top: 5px; right: 5px; background: #e11d48; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
+    @media (max-width: 768px) { .hero h1 { font-size: 40px; } nav a { margin-left: 10px; font-size: 14px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand"><img id="navLogo" src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=100&auto=format&fit=crop" alt="Logo"><span>HOGAN<span> Ph</span></span></div>
+    <div><a href="#gallery">Gallery</a><a href="#contact">Contact</a><a href="#" onclick="showAdmin()">Admin</a></div>
+  </nav>
+  <section class="hero" id="heroSection">
+    <div><img id="heroLogo" src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=200&auto=format&fit=crop" alt="Logo"><h1>HOGAN Ph</h1><p>Capturing Life's Beautiful Moments</p><div><a href="#gallery">View Work</a><a href="#contact" class="outline">Contact Me</a></div></div>
+  </section>
+  <section class="gallery" id="gallery"><h2>My Work</h2><div class="grid" id="grid"></div></section>
+  <section class="contact" id="contact">
+    <h2>Get In Touch</h2>
+    <div class="cards">
+      <div class="card"><h3>WhatsApp</h3><a id="whatsappLink" href="https://wa.me/966500000000" target="_blank" rel="noopener">+966 50 000 0000</a></div>
+      <div class="card"><h3>Instagram</h3><a id="instagramLink" href="https://instagram.com/hoganph" target="_blank" rel="noopener">@hoganph</a></div>
+      <div class="card"><h3>Phone</h3><a id="phoneLink" href="tel:+966500000000">+966 50 000 0000</a></div>
+    </div>
+  </section>
+  <footer><p>© 2024 HOGAN Ph. All Rights Reserved.</p></footer>
+  <div class="lightbox" id="lightbox"><button class="close" onclick="closeLightbox()">×</button><button class="prev" onclick="prevImage()">❮</button><button class="next" onclick="nextImage()">❯</button><img src="" id="lightboxImg"><div class="counter" id="counter"></div></div>
+  <div class="admin-panel" id="adminPanel">
+    <h2>Admin Dashboard</h2>
+    <div class="settings-section"><h3>Logo</h3><input type="file" id="logoUpload" accept="image/*" onchange="uploadLogo(event)"></div>
+    <div class="settings-section"><h3>Background</h3><input type="file" id="bgUpload" accept="image/*" onchange="uploadBg(event)"></div>
+    <div class="settings-section"><h3>Colors & Font</h3><label>Primary Color</label><input type="color" id="primaryColor" value="#e11d48" onchange="changeColor(this.value)"><label>Font</label><select id="fontSelect" onchange="changeFont(this.value)"><option value="'Poppins', sans-serif">Poppins</option><option value="'Cairo', sans-serif">Cairo</option><option value="'Lora', serif">Lora</option><option value="'Roboto', sans-serif">Roboto</option></select></div>
+    <div class="settings-section"><h3>Contact</h3><label>WhatsApp (رقم فقط)</label><input type="text" id="whatsappInput" placeholder="966500000000"><label>Instagram (اسم المستخدم فقط)</label><input type="text" id="instagramInput" placeholder="hoganph"><label>Phone (رقم فقط)</label><input type="text" id="phoneInput" placeholder="966500000000"></div>
+    <div class="settings-section"><h3>Upload Photos</h3><div class="upload-btn" onclick="document.getElementById('fileInput').click()"><p>📸 Click to select MULTIPLE photos</p><input type="file" id="fileInput" accept="image/*" multiple hidden></div><div class="admin-grid" id="adminGrid"></div></div>
+    <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+    <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+  </div>
+  <div class="modal" id="modal"><div class="modal-box"><h2>Admin Login</h2><input type="password" id="pass" placeholder="Password"><button type="button" onclick="checkPass()">Login</button><button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button></div></div>
+  <script>
+    let settings = {};
+    let photos = [];
+    let currentIndex = 0;
+    let isAdmin = false;
+    const PASS = 'HOGAN@Admin#2025';
+
+    async function loadSettings() {
+      const res = await fetch('/api/settings');
+      settings = await res.json();
+      applySettings();
+    }
+
+    async function loadPhotos() {
+      const res = await fetch('/api/photos');
+      photos = await res.json();
+      render();
+    }
+
+    function applySettings() {
+      document.documentElement.style.setProperty('--primary', settings.primaryColor);
+      document.documentElement.style.setProperty('--font', settings.font);
+      document.getElementById('navLogo').src = settings.logo;
+      document.getElementById('heroLogo').src = settings.logo;
+      document.getElementById('heroSection').style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url(${settings.heroBg}) center/cover`;
+      document.getElementById('primaryColor').value = settings.primaryColor;
+      document.getElementById('fontSelect').value = settings.font;
+      document.getElementById('whatsappInput').value = settings.whatsapp;
+      document.getElementById('instagramInput').value = settings.instagram;
+      document.getElementById('phoneInput').value = settings.phone;
+      
+      // تنظيف الروابط تلقائياً
+      let wa = settings.whatsapp.replace(/[^0-9]/g, '');
+      let insta = settings.instagram.replace('@', '').trim();
+      let ph = settings.phone.replace(/[^0-9]/g, '');
+      
+      document.getElementById('whatsappLink').href = `https://wa.me/${wa}`;
+      document.getElementById('whatsappLink').textContent = `+${wa}`;
+      document.getElementById('instagramLink').href = `https://instagram.com/${insta}`;
+      document.getElementById('instagramLink').textContent = `@${insta}`;
+      document.getElementById('phoneLink').href = `tel:+${ph}`;
+      document.getElementById('phoneLink').textContent = `+${ph}`;
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      photos.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<img src="${p.src}" loading="lazy"><div class="info"><h3>${p.title}</h3><p>${p.cat}</p></div>`;
+        div.onclick = () => openLightbox(i);
+        grid.appendChild(div);
+      });
+    }
+
+    function openLightbox(i) { currentIndex = i; document.getElementById('lightbox').style.display = 'flex'; document.getElementById('lightboxImg').src = photos[i].src; document.getElementById('counter').textContent = `${i+1} / ${photos.length}`; }
+    function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; }
+    function nextImage() { if (currentIndex < photos.length - 1) { currentIndex++; openLightbox(currentIndex); } }
+    function prevImage() { if (currentIndex > 0) { currentIndex--; openLightbox(currentIndex); } }
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('lightbox').style.display === 'flex') {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') nextImage();
+        if (e.key === 'ArrowLeft') prevImage();
+      }
+    });
+
+    function showAdmin() {
+      if (isAdmin) { document.getElementById('adminPanel').classList.add('active'); renderAdmin(); return; }
+      document.getElementById('modal').style.display = 'flex';
+    }
+    function checkPass() {
+      if (document.getElementById('pass').value === PASS) {
+        isAdmin = true; document.getElementById('modal').style.display = 'none'; document.getElementById('adminPanel').classList.add('active'); renderAdmin();
+      } else alert('Incorrect password');
+    }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function logoutAdmin() { isAdmin = false; document.getElementById('adminPanel').classList.remove('active'); window.scrollTo(0,0); }
+
+    function renderAdmin() {
+      const grid = document.getElementById('adminGrid');
+      grid.innerHTML = '';
+      photos.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'thumb';
+        div.innerHTML = `<img src="${p.src}" loading="lazy"><button class="delete" onclick="deletePhoto(${p.id})">×</button>`;
+        grid.appendChild(div);
+      });
+    }
+
+    async function deletePhoto(id) {
+      await fetch(`/api/photos/${id}`, { method: 'DELETE' });
+      photos = photos.filter(p => p.id !== id);
+      render(); renderAdmin();
+    }
+
+    // حفظ الإعدادات مع تنظيف البيانات
+    async function saveSettings() {
+      settings.whatsapp = document.getElementById('whatsappInput').value.replace(/[^0-9]/g, '');
+      settings.instagram = document.getElementById('instagramInput').value.replace('@', '').trim();
+      settings.phone = document.getElementById('phoneInput').value.replace(/[^0-9]/g, '');
+      
+      await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(settings) });
+      applySettings();
+      alert('Settings saved successfully!');
+    }
+
+    async function uploadLogo(event) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('logo', file);
+      const res = await fetch('/api/upload-logo', { method: 'POST', body: formData });
+      const data = await res.json();
+      settings.logo = data.logo;
+      applySettings();
+    }
+
+    async function uploadBg(event) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('bg', file);
+      const res = await fetch('/api/upload-bg', { method: 'POST', body: formData });
+      const data = await res.json();
+      settings.heroBg = data.heroBg;
+      applySettings();
+    }
+
+    function changeColor(value) { settings.primaryColor = value; document.documentElement.style.setProperty('--primary', value); }
+    function changeFont(value) { settings.font = value; document.documentElement.style.setProperty('--font', value); }
+
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      if (e.target.files.length === 0) return;
+      const files = Array.from(e.target.files);
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append('image', files[i]);
+        formData.append('title', 'New Photo');
+        formData.append('category', 'General');
+        await fetch('/api/photos', { method: 'POST', body: formData });
+      }
+      alert(`Added ${files.length} photos!`);
+      await loadPhotos();
+      renderAdmin();
+      e.target.value = '';
+    });
+
+    loadSettings();
+    loadPhotos();
+  </script>
+</body>
+</html>
